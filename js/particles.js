@@ -4,7 +4,6 @@ var particles = [];
 function setup() {
   createCanvas(windowWidth, windowHeight);
   system = new ParticleSystem(createVector(width/2, height/2));
-
 }
 
 function draw() {
@@ -18,7 +17,7 @@ function draw() {
 }
 
 var Particle = function(position) {
-  this.velocity = createVector(random(-7, 7), random(-7, 7));
+  this.velocity = createVector(5, 5);
   this.position = position.copy();
   this.garbage = false;
 };
@@ -36,8 +35,8 @@ Particle.prototype.move = function(){
   }
 
   if (this.isBouncing()) {
-    newVelocity = createVector(-this.velocity.x +random(-1, 1),
-                               -this.velocity.y +random(-1, 1));
+    newVelocity = createVector(-this.velocity.x + random(-1, 1),
+                               -this.velocity.y + random(-1, 1));
     this.velocity = newVelocity;
     this.position.add(this.velocity);
   }
@@ -45,10 +44,10 @@ Particle.prototype.move = function(){
 };
 
 Particle.prototype.display = function() {
-  noStroke();
-  // strokeWeight(2);
-  fill(255,0,0);
-  ellipse(this.position.x, this.position.y, 3, 3);
+  // noStroke();
+  strokeWeight(2);
+  fill(255);
+  ellipse(this.position.x, this.position.y, 10, 10);
 };
 
 Particle.prototype.isInLandingArea = function(){
