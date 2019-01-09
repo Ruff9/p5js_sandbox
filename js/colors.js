@@ -1,25 +1,48 @@
 var w, h, base;
-var columns, rows;
+var table, columns, rows;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  base = 40;
+  base = 20;
 
-  columns = floor(width/base);
-  rows = floor(height/base);
+  table = new Table();
 
-  w = width/columns;
-  h = height/rows;
-
-  for ( var i = 0; i < columns; i++ ) {
-    for ( var j = 0; j < rows; j++ ) {
-      fill(255, random(0, 200), random(0, 200));
-      noStroke();
-      rect(i*w, j*h, w+1, h+1);
+  for ( var i = 0; i < table.columns; i++ ) {
+    for ( var j = 0; j < table.rows; j++ ) {
+      cell = new Cell({x: i, y: j})
+      table.cells.push(cell);
+      cell.display();
     }
   }
 }
 
 function draw() {
+  var randomCell= table.cells[Math.floor(Math.random() * table.cells.length)];
+
+  randomCell.color = {r: 255, g: random(20, 200), b: random(20, 200)};
+  randomCell.display();
 }
+
+var Table = function() {
+  this.columns = floor(width/base);
+  this.rows = floor(height/base);
+  this.cells = [];
+}
+
+var Cell = function(position) {
+  this.position = position;
+  this.color = {r: 255, g: random(20, 200), b: random(20, 200)};
+  this.width = width/table.columns;
+  this.height = height/table.rows;
+};
+
+Cell.prototype.display = function() {
+  fill(this.color.r, this.color.g, this.color.b);
+  noStroke();
+
+  rect(this.position.x*this.width,
+       this.position.y*this.height,
+       this.width+1,
+       this.height+1);
+};
