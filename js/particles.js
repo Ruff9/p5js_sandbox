@@ -44,7 +44,6 @@ Particle.prototype.move = function(){
 };
 
 Particle.prototype.display = function() {
-  // noStroke();
   strokeWeight(2);
   fill(255);
   ellipse(this.position.x, this.position.y, 10, 10);
