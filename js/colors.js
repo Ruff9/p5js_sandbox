@@ -1,11 +1,14 @@
-var table, origin;
-var base = 20;
-var velocity = 0.2;
+var table, origin, velocity;
+
+var baseSize = 15;
+var blueAreaSize = 12;
+var baseVelocity = 0.45;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
   table = new Table();
+  velocity = baseVelocity;
 
   origin = {x: floor(table.columns/2), y: floor(table.rows/2)};
 
@@ -30,9 +33,9 @@ function draw() {
 
 function moveBlueArea() {
   if (floor(origin.x) == floor(table.columns*3/4)) {
-    velocity = -0.2;
+    velocity = -baseVelocity;
   } else if (floor(origin.x) == floor(table.columns/4)) {
-    velocity = 0.2;
+    velocity = baseVelocity;
   }
 
   origin.x = origin.x + velocity;
@@ -68,8 +71,8 @@ function updateBlueCells() {
 }
 
 var Table = function() {
-  this.columns = floor(width/base);
-  this.rows = floor(height/base);
+  this.columns = floor(width/baseSize);
+  this.rows = floor(height/baseSize);
   this.cells = [];
 }
 
@@ -101,12 +104,10 @@ Cell.prototype.display = function() {
 };
 
 Cell.prototype.isInBlueArea = function(origin) {
-  var areaWidth = 5;
-
   var distance = sqrt(sq(this.position.x - origin.x) +
                       sq(this.position.y - origin.y));
 
-  return distance < areaWidth;
+  return distance < blueAreaSize;
 };
 
 function randomRedColor() {
