@@ -45,11 +45,9 @@ function moveBlueArea() {
   table.cells.forEach(function(cell) {
     if (cell.isInBlueArea(origin) && cell.type !== 'blue') {
       cell.type = 'blue';
-      cell.color = randomBlueColor();
       cell.display();
     } else if (!cell.isInBlueArea(origin) && cell.type == 'blue') {
       cell.type = 'red';
-      cell.color = randomRedColor();
       cell.display();
     }
   });
@@ -88,15 +86,27 @@ var Cell = function(position) {
 };
 
 Cell.prototype.display = function() {
-  if(this.type == 'blue') {this.color = randomBlueColor();}
+  switch(this.type) {
+    case 'blue':
+      this.color = randomBlueColor();
+      strokeColor = randomBlueColor();
+      break;
+    case 'red':
+      this.color = randomRedColor();
+      strokeColor = randomRedColor();
+      break;
+    case 'green':
+      this.color = randomGreenColor();
+      strokeColor = randomGreenColor();
+  }
 
   fill(this.color.r, this.color.g, this.color.b);
-  noStroke();
+  stroke(strokeColor.r, strokeColor.g, strokeColor.b);
 
   rect(this.position.x * this.width,
        this.position.y * this.height,
-       this.width + 2,
-       this.height + 2);
+       this.width + 1,
+       this.height + 1);
 };
 
 Cell.prototype.isInBlueArea = function(origin) {
@@ -128,8 +138,22 @@ function mouseMoved() {
                                             cell.position.y < cellY + 2);
 
   overredCells.forEach(function(cell) {
-    cell.color = randomGreenColor();
     cell.type = 'green';
+    cell.display();
+  });
+}
+
+function mouseDragged() {
+  cellX = floor(mouseX/table.cells[0].width);
+  cellY = floor(mouseY/table.cells[0].height);
+
+  overredCells = table.cells.filter(cell => cell.position.x > cellX - 2 &&
+                                            cell.position.x < cellX + 2 &&
+                                            cell.position.y > cellY - 2 &&
+                                            cell.position.y < cellY + 2);
+
+  overredCells.forEach(function(cell) {
+    cell.type = 'red';
     cell.display();
   });
 }
