@@ -95,9 +95,9 @@ Cell.prototype.isInBlueArea = function(origin) {
 };
 
 function randomRedColor() {
-  return {r: 255, g: random(20, 200), b: random(20, 100)};
+  return {r: 255, g: random(0, 170), b: random(0, 100)};
 }
 
 function randomBlueColor() {
-  return {r: random(20, 100), g: random(20, 200), b: 255};
+  return {r: random(100, 200), g: random(100, 200), b: 255};
 }
