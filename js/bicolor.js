@@ -1,8 +1,8 @@
 var table, origin, velocity;
 
-var baseSize = 15;
-var blueAreaSize = 12;
-var baseVelocity = 0.45;
+var baseSize = 12;
+var blueAreaSize = 10;
+var baseVelocity = 0.5;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -27,8 +27,9 @@ function setup() {
 function draw() {
   moveBlueArea();
 
-  updateRedCells();
-  updateBlueCells();
+  for (step = 0; step < 3; step++) {
+    updateRandomRedCell();
+  }
 }
 
 function moveBlueArea() {
@@ -53,35 +54,18 @@ function moveBlueArea() {
   });
 }
 
-function updateRedCells() {
-  var redCells = table.redCells();
+function updateRandomRedCell() {
+  var redCells = table.cells.filter(cell => cell.type === 'red');
   var randomRedCell = redCells[floor(random() * redCells.length)];
 
   randomRedCell.color = randomRedColor();
   randomRedCell.display();
 }
 
-function updateBlueCells() {
-  var blueCells = table.blueCells();
-  var randomBlueCell = blueCells[floor(random() * blueCells.length)];
-
-  if (randomBlueCell == null) { return }
-  randomBlueCell.color = randomBlueColor();
-  randomBlueCell.display();
-}
-
 var Table = function() {
   this.columns = floor(width/baseSize);
   this.rows = floor(height/baseSize);
   this.cells = [];
-}
-
-Table.prototype.redCells = function() {
-  return this.cells.filter(cell => cell.type === 'red');
-}
-
-Table.prototype.blueCells = function() {
-  return this.cells.filter(cell => cell.type === 'blue');
 }
 
 var Cell = function(position) {
