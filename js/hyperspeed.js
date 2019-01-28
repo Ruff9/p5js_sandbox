@@ -12,10 +12,10 @@ function setup() {
 
   for (i = 0; i < 1000; i++) {
     stars[i] = {
-      posX1: Math.random() * width - width/2,
-      posY1: Math.random() * height - height/2,
-      size: map(Math.random(), 0, 1, 1, 3),
-      color: Math.floor(Math.random() * 155) + 150
+      posX1: random() * width - width/2,
+      posY1: random() * height - height/2,
+      size: map(random(), 0, 1, 1, 3),
+      color: floor(random() * 155) + 150
     }
 
     stars[i].posX2 = stars[i].posX1;
@@ -27,7 +27,6 @@ function draw() {
   background(0,0,20);
 
   translate(width/2, height/2);
-  // translate(mouseX, mouseY);
 
   stars.forEach(function(star) {
     stroke(star.color);
@@ -62,22 +61,22 @@ function accelerating(star) {
   star.posX2 = speed2*star.posX2;
   star.posY2 = speed2*star.posY2;
 
-  if (Math.abs(star.posX1) > width/2 || Math.abs(star.posY1) > height/2) {
-    star.posX1 = (Math.random() * width - width/2)/2;
-    star.posY1 = (Math.random() * height - height/2)/2;
+  if (abs(star.posX1) > width/2 || abs(star.posY1) > height/2) {
+    star.posX1 = (random() * width - width/2)/2;
+    star.posY1 = (random() * height - height/2)/2;
     star.posX2 = star.posX1;
     star.posY2 = star.posY1;
   }
 }
 
 function slowing(star) {
-  if (Math.abs(star.posX1) < Math.abs(star.posX2)) {
+  if (abs(star.posX1) < abs(star.posX2)) {
     star.posX1 = speed2*star.posX1;
   } else {
     star.posX1 = initialSpeed*star.posX2;
   }
 
-  if (Math.abs(star.posY1) < Math.abs(star.posY2)) {
+  if (abs(star.posY1) < abs(star.posY2)) {
     star.posY1 = speed2*star.posY1;
   } else {
     star.posY1 = initialSpeed*star.posY2;
@@ -86,9 +85,9 @@ function slowing(star) {
   star.posX2 = initialSpeed*star.posX2;
   star.posY2 = initialSpeed*star.posY2;
 
-  if (Math.abs(star.posX1) > width/2 || Math.abs(star.posY1) > height/2) {
-    star.posX1 = (Math.random() * width - width/2);
-    star.posY1 = (Math.random() * height - height/2);
+  if (abs(star.posX1) > width/2 || abs(star.posY1) > height/2) {
+    star.posX1 = (random() * width - width/2);
+    star.posY1 = (random() * height - height/2);
     star.posX2 = star.posX1;
     star.posY2 = star.posY1;
   }

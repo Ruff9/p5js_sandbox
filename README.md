@@ -1,11 +1,11 @@
 # p5js Sandbox
 
-Page statique avec live reload pour expérimentations faciles avec p5.js.
+Static page with livereload for easy experimentations with p5.js.
 
-installer [live-server](https://github.com/tapio/live-server):
+install [live-server](https://github.com/tapio/live-server):
 
 `npm install -g live-server`
 
-lancer le serveur:
+launch server:
 
 `$ live-server`
