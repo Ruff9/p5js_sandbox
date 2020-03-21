@@ -1,13 +1,12 @@
 let table, origin;
 let black, white;
+let counter = 0.0;
 
-const baseSize = 65;
-const baseframeRate = 15;
-const density = 1;
-const activeAreaSize = 10;
+const baseSize = 85;
+const density = 0.5; // float low density between 0 and 1
+const activeAreaSize = 4;
 
 function setup() {
-  frameRate(baseframeRate);
   createCanvas(windowWidth, windowHeight);
   black = color(0);
 
@@ -30,7 +29,10 @@ function setup() {
 }
 
 function draw() {
-  for (step = 0; step < density; step++) {
+  counter += 0.1;
+
+  if(counter >= 1/density){
+    counter = 0.0;
     table.randomActiveCell().colorize();
   }
 }
@@ -55,13 +57,17 @@ const Cell = function(position) {
   this.bkgColor = black;
   this.width = width/table.columns;
   this.height = height/table.rows;
+  this.currentAlpha = 255;
   this.active = false;
   this.live = false;
 };
 
 Cell.prototype.display = function() {
-  fill(this.bkgColor);
+  backgound = this.bkgColor;
+  // backgound.setAlpha(this.currentAlpha);
+
   noStroke();
+  fill(backgound);
 
   rect(this.position.x * this.width,
        this.position.y * this.height,
@@ -79,28 +85,31 @@ Cell.prototype.colorize = function() {
 
 Cell.prototype.fade = function() {
   const fading = () => {
-    // const currentAlpha = this.bkgColor._getAlpha()
-
-    // if (currentAlpha <= 0) { stopFading(); }
-
+    // with lerpColor
     const brightnness = this.bkgColor._array.slice(0, 2)
-                                            .reduce((a, b) => a + b, 0)
+    .reduce((a, b) => a + b, 0)
 
 
     if (brightnness < 0.05) { stopFading(); }
     const newColor = lerpColor(this.bkgColor, black, 0.1);
     this.bkgColor = newColor;
 
-    // this.bkgColor.setAlpha(currentAlpha - 10)
-    // console.log(this.bkgColor._getAlpha())
+    // with alpha
+    // const currentAlpha = this.currentAlpha;
+    //
+    // if (currentAlpha <= 0) { stopFading(); }
+    // this.currentAlpha = currentAlpha - 10;
+
+    // console.log(this.currentAlpha)
     this.display();
   }
 
   const stopFading = () => {
+    clearInterval(fadingProcess);
     this.bkgColor = black;
+    this.currentAlpha = 255;
     this.live = false;
     this.display();
-    clearInterval(fadingProcess);
   }
 
   const fadingProcess = setInterval(fading, 100);
