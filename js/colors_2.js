@@ -1,18 +1,17 @@
 let table, origin;
-let black, white;
+let black;
 let j = 0.0;
 let i = 0.0;
 
-const baseSize = 95;
-const density = 0.5; // float low density between 0 and 1
-const fadeSpeed = 1.5;
-const activeAreaSize = 3;
+const baseSize = 65;
+const activeAreaSize = 5;
+
+const density = 1.5; // float low density between 0 and 1
+const fadeSpeed = 1;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   black = color(0);
-
-  background(black);
 
   table = new Table();
 
@@ -48,8 +47,8 @@ function draw() {
 }
 
 const Table = function() {
-  this.columns = floor(width/baseSize);
-  this.rows = floor(height/baseSize);
+  this.columns = width/baseSize;
+  this.rows = height/baseSize;
   this.cells = [];
 };
 
@@ -73,6 +72,7 @@ const Cell = function(position) {
   this.height = height/table.rows;
   this.active = false;
   this.live = false;
+  this.speed = floor(random(1, 5));
 };
 
 Cell.prototype.display = function() {
@@ -88,7 +88,7 @@ Cell.prototype.display = function() {
 };
 
 Cell.prototype.colorize = function() {
-  this.bkgColor = randomBlueColor();
+  this.bkgColor = randomGreenColor();
   this.live = true;
 
   this.display();
@@ -103,7 +103,13 @@ Cell.prototype.fade = function() {
     this.display();
   }
 
-  this.bkgColor = lerpColor(this.bkgColor, black, 0.1);;
+  let n = 0;
+
+  while (n < this.speed) {
+    n++;
+    this.bkgColor = lerpColor(this.bkgColor, black, 0.1);
+  }
+
   this.display();
 }
 
