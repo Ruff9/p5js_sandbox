@@ -1,10 +1,12 @@
 let table, origin;
 let black, white;
-let counter = 0.0;
+let j = 0.0;
+let i = 0.0;
 
-const baseSize = 85;
+const baseSize = 95;
 const density = 0.5; // float low density between 0 and 1
-const activeAreaSize = 4;
+const fadeSpeed = 1.5;
+const activeAreaSize = 3;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -29,11 +31,19 @@ function setup() {
 }
 
 function draw() {
-  counter += 0.1;
+  i += 0.1;
+  j += 0.1;
 
-  if(counter >= 1/density){
-    counter = 0.0;
+  if (i >= 1/density) {
+    i = 0.0;
     table.randomActiveCell().colorize();
+  }
+
+  if (j >= 1/fadeSpeed) {
+    j = 0.0;
+    for (const cell of table.liveCells()) {
+      cell.fade();
+    }
   }
 }
 
@@ -52,22 +62,24 @@ Table.prototype.randomActiveCell = function() {
   return activeCells[floor(random() * activeCells.length)];
 };
 
+Table.prototype.liveCells = function() {
+  return this.cells.filter(cell => cell.live == true);
+};
+
 const Cell = function(position) {
   this.position = position;
   this.bkgColor = black;
   this.width = width/table.columns;
   this.height = height/table.rows;
-  this.currentAlpha = 255;
   this.active = false;
   this.live = false;
 };
 
 Cell.prototype.display = function() {
-  backgound = this.bkgColor;
-  // backgound.setAlpha(this.currentAlpha);
+  bkg = this.bkgColor;
 
   noStroke();
-  fill(backgound);
+  fill(bkg);
 
   rect(this.position.x * this.width,
        this.position.y * this.height,
@@ -76,43 +88,23 @@ Cell.prototype.display = function() {
 };
 
 Cell.prototype.colorize = function() {
-  this.bkgColor = randomGreenColor();
+  this.bkgColor = randomBlueColor();
   this.live = true;
 
   this.display();
-  this.fade();
 }
 
 Cell.prototype.fade = function() {
-  const fading = () => {
-    // with lerpColor
-    const brightnness = this.bkgColor._array.slice(0, 2)
-    .reduce((a, b) => a + b, 0)
+  const brightnness = this.bkgColor._getLightness()
 
-
-    if (brightnness < 0.05) { stopFading(); }
-    const newColor = lerpColor(this.bkgColor, black, 0.1);
-    this.bkgColor = newColor;
-
-    // with alpha
-    // const currentAlpha = this.currentAlpha;
-    //
-    // if (currentAlpha <= 0) { stopFading(); }
-    // this.currentAlpha = currentAlpha - 10;
-
-    // console.log(this.currentAlpha)
-    this.display();
-  }
-
-  const stopFading = () => {
-    clearInterval(fadingProcess);
+  if (brightnness < 2) {
     this.bkgColor = black;
-    this.currentAlpha = 255;
     this.live = false;
     this.display();
   }
 
-  const fadingProcess = setInterval(fading, 100);
+  this.bkgColor = lerpColor(this.bkgColor, black, 0.1);;
+  this.display();
 }
 
 Cell.prototype.isInActiveArea = function(origin) {
