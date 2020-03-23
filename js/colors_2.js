@@ -1,25 +1,27 @@
 let table, origin;
 let black;
-let j = 0.0;
 let i = 0.0;
+let j = 0.0;
 
-const baseSize = 65;
-const activeAreaSize = 5;
+const baseSize = 35;
+const rayonExt = 11;
+const rayonInt = 7;
 
-const density = 1.5; // float low density between 0 and 1
-const fadeSpeed = 1;
+const density = 15; // float low density between 0 and 1
+const fadeSpeed = 0.5;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   black = color(0);
+  background(black);
 
   table = new Table();
 
   origin = {x: floor(table.columns/2), y: floor(table.rows/2)};
 
-  for ( let i = 0; i < table.columns; i++ ) {
-    for ( let j = 0; j < table.rows; j++ ) {
-      const cell = new Cell({x: i, y: j});
+  for ( let k = 0; k < table.columns; k++ ) {
+    for ( let l = 0; l < table.rows; l++ ) {
+      const cell = new Cell({x: k, y: l});
 
       if (cell.isInActiveArea(origin)) { cell.active = true; };
 
@@ -47,8 +49,8 @@ function draw() {
 }
 
 const Table = function() {
-  this.columns = width/baseSize;
-  this.rows = height/baseSize;
+  this.columns = round(width/baseSize);
+  this.rows = round(height/baseSize);
   this.cells = [];
 };
 
@@ -68,11 +70,11 @@ Table.prototype.liveCells = function() {
 const Cell = function(position) {
   this.position = position;
   this.bkgColor = black;
-  this.width = width/table.columns;
-  this.height = height/table.rows;
+  this.width = round(width/table.columns);
+  this.height = round(height/table.rows);
   this.active = false;
   this.live = false;
-  this.speed = floor(random(1, 5));
+  this.speed = floor(random(1, 7));
 };
 
 Cell.prototype.display = function() {
@@ -88,7 +90,7 @@ Cell.prototype.display = function() {
 };
 
 Cell.prototype.colorize = function() {
-  this.bkgColor = randomGreenColor();
+  this.bkgColor = randomBlueColor();
   this.live = true;
 
   this.display();
@@ -117,11 +119,15 @@ Cell.prototype.isInActiveArea = function(origin) {
   var distance = sqrt(sq(this.position.x - origin.x) +
                       sq(this.position.y - origin.y));
 
-  return distance < activeAreaSize;
-};
+  return distance < rayonExt && distance > rayonInt;
+}
 
 function randomBlueColor() {
-  return color(random(150, 220), random(150, 220), 255);
+  return color(random(0, 220), random(150, 220), 255);
+}
+
+function lightBlue() {
+  return color(173, 216, 230);
 }
 
 function randomGreenColor() {
