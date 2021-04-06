@@ -16,11 +16,11 @@ function setup() {
 
   table = new Table();
 
-  origin = {x: floor(table.columns/2), y: floor(table.rows/2)};
+  origin = { x: floor(table.columns/2), y: floor(table.rows/2) };
 
   for ( let k = 0; k < table.columns; k++ ) {
     for ( let l = 0; l < table.rows; l++ ) {
-      const cell = new Cell({x: k, y: l});
+      let cell = new Cell({x: k, y: l});
 
       if (cell.isInActiveArea(origin)) {
         cell.active = true;
@@ -39,8 +39,7 @@ function setup() {
 
 function draw() {
   for (let i = 0; i < flickSpeed; i++) {
-    cell = table.randomActiveCell();
-    cell.colorize();
+    table.randomActiveCell().colorize();
   }
 }
 
@@ -51,7 +50,7 @@ const Table = function() {
 };
 
 Table.prototype.randomActiveCell = function() {
-  const activeCells = this.cells.filter(cell => cell.active == true);
+  let activeCells = this.cells.filter(cell => cell.active == true);
   return activeCells[floor(random() * activeCells.length)];
 };
 
@@ -66,7 +65,7 @@ const Cell = function(position) {
 };
 
 Cell.prototype.display = function() {
-  bkg = this.bkgColor;
+  let bkg = this.bkgColor;
 
   if (this.fading) { bkg = this.fade(); }
 
@@ -85,31 +84,31 @@ Cell.prototype.colorize = function() {
 }
 
 Cell.prototype.isInActiveArea = function(origin) {
-  var distance = distanceBetween(this.position, origin);
+  let distance = distanceBetween(this.position, origin);
 
   return  distance < rayonExt && distance > rayonInt;
 }
 
 Cell.prototype.isInFadingArea = function(origin) {
-  var distance = distanceBetween(this.position, origin);
+  let distance = distanceBetween(this.position, origin);
 
   let isFadingExterior = distance < rayonExt && distance > (rayonExt - fadingRadius)
   let isFadingInterior = distance > rayonInt && distance < (rayonInt + fadingRadius)
 
   if (isFadingExterior) {
     this.fadeArea = 'exterior'
-    return true
   } else if (isFadingInterior) {
     this.fadeArea = 'interior'
-    return true
   } else {
     return false
   }
+
+  return true
 }
 
 Cell.prototype.fade = function() {
-  var distance = distanceBetween(this.position, origin);
-  var fadeRatio;
+  let distance = distanceBetween(this.position, origin);
+  let fadeRatio;
 
   if (this.fadeArea == 'exterior') {
     fadeRatio = 1 - floor(rayonExt - distance)/fadingRadius;
