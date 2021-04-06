@@ -127,3 +127,37 @@ function distanceBetween(ptA, ptB) {
 function randomBlueColor() {
   return color(random(0, 220), random(150, 220), 255, 255);
 }
+
+function mouseMoved() {
+  overredCells().forEach(function(cell) {
+    if (cell.active) {
+      cell.bkgColor = lerpColor(cell.bkgColor, black, 0.2);
+
+      cell.display();
+    }
+  });
+}
+
+function mouseDragged() {
+  overredCells().forEach(function(cell) {
+    if (cell.active) {
+      cell.bkgColor = randomBlueColor();
+
+      cell.display();
+    }
+  });
+}
+
+function overredCells() {
+  let cellX = floor(mouseX/table.cells[0].width);
+  let cellY = floor(mouseY/table.cells[0].height);
+
+  let radius = 2;
+
+  cells = table.cells.filter(cell => cell.position.x > cellX - radius &&
+                                    cell.position.x < cellX + radius &&
+                                    cell.position.y > cellY - radius &&
+                                    cell.position.y < cellY + radius);
+
+  return cells;
+}
