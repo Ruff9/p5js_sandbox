@@ -33,15 +33,6 @@ function draw() {
   let plant = table.plants[0];
 
   plant.display();
-
-  switch (plant.state) {
-    case 'growing':
-      plant.grow();
-      break;
-    case 'blooming':
-      plant.bloom();
-      break;
-  }
 }
 
 class Table {
@@ -86,28 +77,66 @@ class Cell {
 }
 
 class Plant {
-  constructor(seed){
-    this.body = [seed]
+  constructor(seed) {
+    this.id = 1;
+    this.rod = null;
+    this.flower = null;
+
+    this.body = [seed];
     this.color = seed.color;
-    this.size = 1;
-    this.maxSize = 25;
+
     this.state = 'growing';
     this.growSpeed = 15; // entre 0 et 100
     this.energy = 0;
-    this.flowerColor = randomRedColor();
-    this.petals = [];
-    this.maxPetals = 35;
+
+    this.init(seed);
   };
 
+  init(seed) {
+    let rod = new Rod(this.id, seed);
+    this.rod = rod;
+  }
+
   display() {
-    for (let i = 0; i < this.body.length; i++) {
-      this.body[i].display();
+    switch (this.state) {
+      case 'growing':
+        this.rod.grow();
+        break;
+      case 'blooming':
+        if (this.flower == null) {
+          let bud = this.rod.body[this.rod.body.length - 1];
+          this.flower = new Flower(this.id, bud);
+        }
+        this.flower.bloom();
+        break;
+      case 'done':
+        break;
     }
+
+    let cells = this.rod.body;
+    if (this.flower) { cells = [...cells, ...this.flower.petals].filter(onlyUnique); }
+
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].display();
+    }
+  }
+}
+
+class Rod {
+  constructor(plantId, seed) {
+    this.plantId = plantId;
+    this.size = 1;
+    this.maxSize = 25;
+    this.body = [seed];
+    this.color = seed.color;
+    this.growSpeed = 15; // entre 0 et 100
+    this.energy = 0;
   }
 
   grow() {
     if(this.size == this.maxSize) {
-      this.state = 'blooming';
+      console.log('rod grown');
+      parent(this.plantId).state = 'blooming';
       return;
     }
 
@@ -122,53 +151,47 @@ class Plant {
       this.energy = 0;
     }
   }
+}
+
+class Flower {
+  constructor(plantId, bud) {
+    this.plantId = plantId;
+    this.bud = bud;
+    this.color = randomRedColor();
+    this.petals = [bud];
+    this.maxPetals = 35;
+    this.growSpeed = 15; // entre 0 et 100
+    this.energy = 0;
+  }
 
   bloom() {
-    let head = this.body[this.body.length - 1];
-
-    head.color = this.flowerColor;
-    head.display();
-
     this.energy = this.energy + this.growSpeed;
 
+    if(this.petals.length >= this.maxPetals) {
+      console.log('flower bloomed');
+      parent(this.plantId).state = 'done';
+      return
+    }
+
     if (this.energy >= 100) {
-      if(this.petals.length >= this.maxPetals) {
-        console.log('flower bloomed');
-        this.state = 'waiting';
-        return
-      } else if(this.petals.length < 1) {
-        let newPetals = table.cellsInContact(head);
+      let newPetals = []
 
-        for (let i = 0; i < newPetals.length; i++) {
-          newPetals[i].color = this.flowerColor;
-          newPetals[i].display();
-        }
-
-        this.petals = this.petals.concat(newPetals);
-
-        this.energy = 0;
-      } else {
-        let newPetals = []
-
-        for (let i = 0; i < this.petals.length; i++) {
-          let newP = table.cellsInContact(this.petals[i]);
-          newPetals.push(newP);
-        }
-        newPetals = newPetals.flat().filter(onlyUnique);
-        for (let i = 0; i < newPetals.length; i++) {
-          newPetals[i].color = this.flowerColor;
-          newPetals[i].display();
-        }
-
-        this.petals = this.petals.concat(newPetals);
-        this.energy = 0;
+      for (let i = 0; i < this.petals.length; i++) {
+        let newP = table.cellsInContact(this.petals[i]);
+        newPetals.push(newP);
       }
+
+      newPetals = newPetals.flat().filter(onlyUnique);
+
+      for (let i = 0; i < newPetals.length; i++) {
+        newPetals[i].color = this.color;
+      }
+
+      this.petals = this.petals.concat(newPetals);
+      this.energy = 0;
     }
   }
 }
-
-
-
 
 function randomGreenColor() {
   return color(random(0, 170), 190, random(0, 30));
@@ -180,4 +203,9 @@ function randomRedColor() {
 
 function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
+}
+
+function parent(id) {
+  let plant = table.plants.find(x => x.id === id)
+  return plant;
 }

@@ -27,30 +27,35 @@ function setup() {
 function draw() {
 }
 
-const Table = function() {
-  this.columns = round(width/baseSize);
-  this.rows = round(height/baseSize);
-  this.cells = [];
+class Table {
+  constructor() {
+    this.columns = round(width/baseSize);
+    this.rows = round(height/baseSize);
+    this.cells = [];
+    this.plants = [];
+  }
 };
 
-const Cell = function(position) {
-  this.position = position;
-  this.color = randomColor();
-  this.width = round(width/table.columns);
-  this.height = round(height/table.rows);
-};
+class Cell {
+  constructor(position, color = black) {
+    this.position = position;
+    this.color = randomColor();
+    this.width = round(width/table.columns);
+    this.height = round(height/table.rows);
+  }
 
-Cell.prototype.display = function() {
-  let bkg = this.color;
+  display() {
+    let bkg = this.color;
 
-  noStroke();
-  fill(bkg);
+    noStroke();
+    fill(bkg);
 
-  rect(this.position.x * this.width,
-       this.position.y * this.height,
-       this.width,
-       this.height);
-};
+    rect(this.position.x * this.width,
+         this.position.y * this.height,
+         this.width,
+         this.height);
+  }
+}
 
 function randomColor() {
   return color(random(0, 255), random(0, 255), random(0, 255));
